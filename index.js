@@ -11,13 +11,19 @@ const queue = new Queue();
 let opponent = null;
 let currTurn = 0;
 let board = []; 
+let mainBoardObj = null;
+createBoard();
 
-for (let i = 0; i < 7; i++) {
-  let tempCol = [];
-  for (let j = 0; j < 6; j++) {
-    tempCol.push(0);
+function createBoard() {
+  board = [];
+
+  for (let i = 0; i < 7; i++) {
+    let tempCol = [];
+    for (let j = 0; j < 6; j++) {
+      tempCol.push(0);
+    }
+    board.push(tempCol);
   }
-  board.push(tempCol);
 }
 
 /*
@@ -35,11 +41,18 @@ ComfyJS.onCommand = (user, command, message, flags, extra) => {
   console.log(`!${command} was typed in chat`);
 
   if((user === twitchTvHandle) && (command === "connect4")) {
+    mainBoardObj = document.getElementById("mainboard");
+    mainBoardObj.innerHTML = "<div class='connect4'><div id='names'></div><div id='board'></div></div>";
     opponent = message;
     updateBoard();
     let titleVersus = document.getElementById("names");
     titleVersus.innerHTML = "<h1>" + twitchTvHandle + " vs. " + opponent + "</h1>";
     currTurn = 0;
+  }
+
+  if ((user === twitchTvHandle) && ((command === "reset") || (command === "r"))) {
+    createBoard();
+    updateBoard();
   }
 
   if((user === twitchTvHandle) && (command === "c4") && (currTurn === 0)) {
@@ -74,14 +87,26 @@ function pushOnBoard(location, color) {
     
     if(finalResult == 1) {
       let titleVersus = document.getElementById("names");
-      titleVersus.innerHTML = "BlueExabyte Won!!";
+      titleVersus.innerHTML = "<h1>BlueExabyte Won!!</h1>";
       currTurn = -1;
+
+      setTimeout(
+        function() {
+          let mainBoardObj = document.getElementById("mainboard");
+          mainBoardObj.innerHTML = "";
+        }, 10000);
     }
     
     if(finalResult == 2) {
       let titleVersus = document.getElementById("names");
-      titleVersus.innerHTML = opponent + " Won!!";
+      titleVersus.innerHTML = "<h1>" + opponent + " Won!!</h1>";
       currTurn = -1;
+
+      setTimeout(
+        function() {
+          let mainBoardObj = document.getElementById("mainboard");
+          mainBoardObj.innerHTML = "";
+        }, 10000);
     }
 
     updateBoard();
